@@ -1,0 +1,11 @@
+.navbar{
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	position: sticky;
+	top:0;
+	box-shadow: 0 0.01em 1em 0.03em blueviolet;
+	margin-bottom: 3em;
+	z-index: 20;
+	background-color: white;
+}
