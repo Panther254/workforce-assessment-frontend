@@ -17,7 +17,7 @@ function index({ applications }) {
 				Job Applications
 			</Typography>
 			{applications.map((application) => (
-				<JobApplications application={application} />
+				<JobApplications key={application.id} application={application} />
 			))}
 		</div>
 	);

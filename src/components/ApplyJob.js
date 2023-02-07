@@ -6,57 +6,110 @@ import axios from "axios";
 
 
 export default function ApplyJob({ id, job_title, positions }) {
-  const [values, setValues] = React.useState({
-    name: '',
-    email: '',
-    role: job_title,
-    resume: '',
-    cover_letter: '',
-    position: '',
-    job: id
-  });
+	const formInitialState = {
+		name: "",
+		email: "",
+		role: job_title,
+		resume: null,
+		cover_letter: "",
+		position: "",
+		job: id,
+		phone_number: "",
+	};
+	const [values, setValues] = React.useState(formInitialState);
+	
+	const errorInitialState = {
+		name: false,
+		email: false,
+		role: false,
+		resume: false,
+		cover_letter: false,
+		position: false,
+		phone_number: false,
+	};
+	const [error, setError] = React.useState(errorInitialState);
 
-  const handleChange = name => event => {
-    setValues({ ...values, [name]: event.target.value });
-  };
+	const handleChange = (name) => (event) => {
+		setValues({ ...values, [name]: event.target.value });
+	};
 
-  const handleFileChange = event => {
-    setValues({ ...values, resume: event.target.files[0] });
-  };
+	const handleFileChange = (event) => {
+		setValues({ ...values, resume: event.target.files[0] });
+	};
 
-    // const positions = [ 'intern', 'full time', 'graduate trainee']
+	const validate = (fields) => {
+		const {
+			name,
+			email,
+			role,
+			resume,
+			cover_letter,
+			position,
+			phone_number,
+		} = fields;
 
-  const handleSubmit = async e =>{
-    e.preventDefault()
-    console.log(values)
-    const formData = new FormData();
-	  formData.append("resume", values.resume);
-	  formData.append("name", values.name);
-	  formData.append("email", values.email);
-	  formData.append("cover_letter", values.cover_letter);
-	  formData.append("job", values.job);
+		if (name == "") {
+			setError({ ...error, name: true });
+			return false;
+		}
+		if (email == "") {
+			setError({ ...error, email: true });
+			return false;
+		}
+		if (role == "") {
+			setError({ ...error, role: true });
+			return false;
+		}
+		if (resume == null) {
+			setError({ ...error, resume: true });
+			return false;
+		}
+		if (cover_letter == "") {
+			setError({ ...error, cover_letter: true });
+			return false;
+		}
+		if (position == "") {
+			setError({ ...error, position: true });
+			return false;
+		}
+		if (phone_number == "") {
+			setError({ ...error, phone_number: true });
+			return false;
+		}
+		return true;
+	};
 
-    const url = 'http://127.0.0.1:8000/jobs/apply-job'
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		if (validate(values)) {
+			const formData = new FormData();
+			formData.append("resume", values.resume);
+			formData.append("name", values.name);
+			formData.append("email", values.email);
+			formData.append("cover_letter", values.cover_letter);
+			formData.append("job", values.job);
+			formData.append("phone_number", values.phone_number);
 
-   try {
-      const response = await axios.post(url, formData, {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		});
-      if (response.data) {
-			    console.log(response.data);
-      } else {
-        console.log(response);
-      }
-   } catch (error) {
-      console.log(error)
-   }
+			const url = "http://127.0.0.1:8000/jobs/apply-job";
 
+			try {
+				const response = await axios.post(url, formData, {
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				});
+				if (response.data) {
+					console.log(response.data);
+				} else {
+					console.log(response);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
 
-  }
-
-  return (
+	return (
 		<Container
 			sx={{
 				overflowY: "scroll",
@@ -67,6 +120,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 			}}>
 			<Box mt={3}>
 				<TextField
+					error={error.name ? true : false}
 					name="name"
 					color="secondary"
 					sx={{ width: "100%" }}
@@ -79,6 +133,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 			</Box>
 			<Box mt={3}>
 				<TextField
+					error={error.email ? true : false}
 					name="email"
 					color="secondary"
 					sx={{ width: "100%" }}
@@ -91,6 +146,20 @@ export default function ApplyJob({ id, job_title, positions }) {
 			</Box>
 			<Box mt={3}>
 				<TextField
+					error={error.phone_number ? true : false}
+					name="phone_number"
+					color="secondary"
+					sx={{ width: "100%" }}
+					margin="normal"
+					id="phone_number"
+					label="Phone number"
+					value={values.phone_number}
+					onChange={handleChange("phone_number")}
+				/>
+			</Box>
+			<Box mt={3}>
+				<TextField
+					error={error.job ? true : false}
 					name="job"
 					color="secondary"
 					sx={{ width: "100%" }}
@@ -105,6 +174,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 			</Box>
 			<Box mt={3}>
 				<TextField
+					error={error.position ? true : false}
 					name="position"
 					sx={{ width: "100%" }}
 					margin="normal"
@@ -126,6 +196,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 			</Box>
 			<Box mt={3}>
 				<TextField
+					error={error.resume ? true : false}
 					name="resume"
 					sx={{ width: "100%" }}
 					color="secondary"
@@ -141,6 +212,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 			</Box>
 			<Box mt={3}>
 				<TextField
+					error={error.cover_letter ? true : false}
 					name="cover_letter"
 					value={values.cover_letter}
 					color="secondary"
@@ -162,5 +234,5 @@ export default function ApplyJob({ id, job_title, positions }) {
 				</Button>
 			</Box>
 		</Container>
-  );
+	);
 }
