@@ -4,11 +4,13 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: process.env.BASE_URL,
+        protocol: 'https',
+        hostname: 'https://res.cloudinary.com',
       },
     ],
   },
 }
 
 module.exports = nextConfig
+
+
