@@ -87,7 +87,7 @@ export default function PostJobForm() {
       formData.append("sector", formState.sector);
       formData.append("job_type", formState.job_type);
 
-	  const url = `${process.env.BASE_URL}/jobs/post-job`;
+	  const url = `${process.env.ENDPOINT_BASE_URL}/jobs/post-job`;
 
       try {
         const response = await axios.post(url, formData, {

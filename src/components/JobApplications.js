@@ -9,7 +9,7 @@ const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 
 function useJob(id) {
-	const url = `${process.env.BASE_URL}/jobs/${id}`;
+	const url = `${process.env.ENDPOINT_BASE_URL}/jobs/${id}`;
 	const { data, error, isLoading } = useSWR(
 		url,
 		fetcher

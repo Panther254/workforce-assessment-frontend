@@ -90,7 +90,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 			formData.append("job", values.job);
 			formData.append("phone_number", values.phone_number);
 
-			const url = `${process.env.BASE_URL}/jobs/apply-job`
+			const url = `${process.env.ENDPOINT_BASE_URL}/jobs/apply-job`
 
 			try {
 				const response = await axios.post(url, formData, {

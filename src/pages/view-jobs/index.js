@@ -17,7 +17,7 @@ function index({ jobs }) {
 
 export async function getStaticProps() {
 	let jobs = []
-	const url = `${process.env.BASE_URL}/jobs/available-jobs`;
+	const url = `${process.env.ENDPOINT_BASE_URL}/jobs/available-jobs`;
 	try {
 		const response = await axios.get(url);
 		if (response.data) {
