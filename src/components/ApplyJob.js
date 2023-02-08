@@ -82,30 +82,50 @@ export default function ApplyJob({ id, job_title, positions }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (validate(values)) {
-			const formData = new FormData();
-			formData.append("resume", values.resume);
-			formData.append("name", values.name);
-			formData.append("email", values.email);
-			formData.append("cover_letter", values.cover_letter);
-			formData.append("job", values.job);
-			formData.append("phone_number", values.phone_number);
 
-			const url = `${process.env.ENDPOINT_BASE_URL}/jobs/apply-job`
+			const mediaData = new FormData();
+			mediaData.append("file", formState.company_logo);
 
-			try {
-				const response = await axios.post(url, formData, {
+			const { data, message, error } = await axios.post(
+				"/api/handleRawFiles",
+				mediaData,
+				{
 					headers: {
 						"Content-Type": "multipart/form-data",
 					},
-				});
-				if (response.data) {
-					console.log(response.data);
-				} else {
-					console.log(response);
 				}
-			} catch (error) {
-				console.log(error);
+			);
+
+			if(message==="Success"){
+				setValues({...values,resume: data})
+				const formData = new FormData();
+				formData.append("resume_link", values.resume);
+				formData.append("name", values.name);
+				formData.append("email", values.email);
+				formData.append("cover_letter", values.cover_letter);
+				formData.append("job", values.job);
+				formData.append("phone_number", values.phone_number);
+
+				const url = `${process.env.ENDPOINT_BASE_URL}/jobs/apply-job`;
+
+				try {
+					const response = await axios.post(url, formData, {
+						headers: {
+							"Content-Type": "multipart/form-data",
+						},
+					});
+					if (response.data) {
+						console.log(response.data);
+					} else {
+						console.log(response);
+					}
+				} catch (error) {
+					console.log(error);
+				}
+			}else{
+				console.log(error)
 			}
+
 		}
 	};
 

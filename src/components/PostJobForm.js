@@ -75,52 +75,71 @@ export default function PostJobForm() {
       setFormState((formState) => ({ ...formState, tech_stacks: [...data] }));
       console.log("Form State: ", formState);
 
-      const formData = new FormData();
-      formData.append("positions", formState.positions);
-      formData.append("company_logo", formState.company_logo);
-      formData.append("job_title", formState.job_title);
-      formData.append("company_title", formState.company_title);
-      formData.append("tech_stacks", formState.tech_stacks);
-      formData.append("salary_range", formState.salary_range);
-      formData.append("country", formState.country);
-      formData.append("number_of_employees", formState.number_of_employees);
-      formData.append("sector", formState.sector);
-      formData.append("job_type", formState.job_type);
+	  const mediaData = new FormData()
+	  mediaData.append("file",formState.company_logo)
 
-	  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/jobs/post-job`;
+	  const { data, message, error } = await axios.post('/api/handleMedia', mediaData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
 
-	  console.log("Here is the generated url", url)
+		if(message === "success"){
+			setFormState((formState) => ({
+				...formState,
+				company_logo: data,
+			}));
+			const formData = new FormData();
+			formData.append("positions", formState.positions);
+			formData.append("company_logo_url", formState.company_logo);
+			formData.append("job_title", formState.job_title);
+			formData.append("company_title", formState.company_title);
+			formData.append("tech_stacks", formState.tech_stacks);
+			formData.append("salary_range", formState.salary_range);
+			formData.append("country", formState.country);
+			formData.append(
+				"number_of_employees",
+				formState.number_of_employees
+			);
+			formData.append("sector", formState.sector);
+			formData.append("job_type", formState.job_type);
 
-      try {
-        const response = await axios.post(url, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (response.data) {
-          console.log(response.data);
-          setFormState({
-            ...formState,
-            positions: [],
-            company_logo: "",
-            company_title: "",
-            job_title: "",
-            salary_range: "",
-            country: "",
-            job_type: "ONSITE",
-            sector: "",
-            number_of_employees: "",
-            tech_stacks: [],
-          });
-          setData([]);
-        } else {
-          console.log(response);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+			const url = `${process.env.NEXT_PUBLIC_BASE_URL}/jobs/post-job`;
+
+			console.log("Here is the generated url", url);
+
+			try {
+				const response = await axios.post(url, formData, {
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				});
+				if (response.data) {
+					console.log(response.data);
+					setFormState({
+						...formState,
+						positions: [],
+						company_logo: "",
+						company_title: "",
+						job_title: "",
+						salary_range: "",
+						country: "",
+						job_type: "ONSITE",
+						sector: "",
+						number_of_employees: "",
+						tech_stacks: [],
+					});
+					setData([]);
+				} else {
+					console.log(response);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		}else{
+			console.log(error)
+		}
     }
-    
   }
 
   return (
