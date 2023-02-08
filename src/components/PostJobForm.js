@@ -166,6 +166,7 @@ export default function PostJobForm() {
 				color="secondary"
 			/>
 			<TextField
+				name="tech_stacks"
 				error={error}
 				id="input-with-icon-textfield"
 				label="Tech Stacks"
@@ -175,7 +176,9 @@ export default function PostJobForm() {
 							<IconButton aria-label="delete" onClick={handleAdd}>
 								<AddIcon />
 							</IconButton>
-							<IconButton aria-label="delete" onClick={()=>setData([])}>
+							<IconButton
+								aria-label="delete"
+								onClick={() => setData([])}>
 								<RemoveIcon />
 							</IconButton>
 						</InputAdornment>
@@ -192,7 +195,9 @@ export default function PostJobForm() {
 			/>
 			<Box sx={{ display: "flex", width: "100%" }}>
 				{data.map((stack, index) => (
-					<Typography key={index} mr={2}>{stack}</Typography>
+					<Typography key={index} mr={2}>
+						{stack}
+					</Typography>
 				))}
 			</Box>
 
