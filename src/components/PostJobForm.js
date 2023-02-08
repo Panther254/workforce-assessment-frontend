@@ -87,7 +87,7 @@ export default function PostJobForm() {
       formData.append("sector", formState.sector);
       formData.append("job_type", formState.job_type);
 
-	  const url = `${process.env.ENDPOINT_BASE_URL}/jobs/post-job`;
+	  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/jobs/post-job`;
 
 	  console.log("Here is the generated url", url)
 
