@@ -191,8 +191,8 @@ export default function PostJobForm() {
 				helperText={error ? "Field must not be blank" : ""}
 			/>
 			<Box sx={{ display: "flex", width: "100%" }}>
-				{data.map((stack) => (
-					<Typography mr={2}>{stack}</Typography>
+				{data.map((stack, index) => (
+					<Typography key={index} mr={2}>{stack}</Typography>
 				))}
 			</Box>
 
