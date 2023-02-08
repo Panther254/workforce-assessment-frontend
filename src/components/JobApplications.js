@@ -9,8 +9,9 @@ const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 
 function useJob(id) {
+	const url = `${process.env.BASE_URL}/jobs/${id}`;
 	const { data, error, isLoading } = useSWR(
-		`http://127.0.0.1:8000/jobs/${id}`,
+		url,
 		fetcher
 	);
 
