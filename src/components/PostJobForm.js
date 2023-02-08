@@ -89,6 +89,8 @@ export default function PostJobForm() {
 
 	  const url = `${process.env.ENDPOINT_BASE_URL}/jobs/post-job`;
 
+	  console.log("Here is the generated url", url)
+
       try {
         const response = await axios.post(url, formData, {
           headers: {
