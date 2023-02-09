@@ -1,25 +1,34 @@
 import React from 'react'
 import JobApplications from '../../components/JobApplications'
-import { Typography, Grid, Box, Button} from '@mui/material';
+import { Typography} from '@mui/material';
 import axios from 'axios'
+import Head from 'next/head'
+
 
 
 function index({ applications }) {
 	console.log("These are the applications",applications)
 	return (
-		<div
+		<>
+			<Head>
+				<title>
+					View Applications
+				</title>
+			</Head>
+			<div
 			style={{
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",
 			}}>
-			<Typography variant="h3" mb={5}>
-				Job Applications
-			</Typography>
-			{applications.map((application) => (
-				<JobApplications key={application.id} application={application} />
-			))}
-		</div>
+				<Typography variant="h3" mb={5}>
+					Job Applications
+				</Typography>
+				{applications.map((application) => (
+					<JobApplications key={application.id} application={application} />
+				))}
+			</div>
+		</>
 	);
 }
 

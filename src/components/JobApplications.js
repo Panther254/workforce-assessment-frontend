@@ -23,7 +23,7 @@ function useJob(id) {
 }
 
 function JobApplications({ application }) {
-	const { id, name, email, resume, cover_letter, job, date_applied, position } = application;
+	const { id, name, email, resume_link, cover_letter, job, date_applied, position } = application;
 	
 	const { jobObject, isLoading, isError } = useJob(job)
 	
@@ -134,7 +134,7 @@ function JobApplications({ application }) {
 										padding: ".5em",
 										textAlign: "center",
 									}}>
-									<Link href={resume}>
+									<Link href={resume_link}>
 										<Button
 											variant="contained"
 											sx={{

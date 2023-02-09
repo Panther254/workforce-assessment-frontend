@@ -84,9 +84,9 @@ export default function ApplyJob({ id, job_title, positions }) {
 		if (validate(values)) {
 
 			const mediaData = new FormData();
-			mediaData.append("file", formState.company_logo);
+			mediaData.append("file", values.resume);
 
-			const { data, message, error } = await axios.post(
+			const response = await axios.post(
 				"/api/handleRawFiles",
 				mediaData,
 				{
@@ -96,17 +96,21 @@ export default function ApplyJob({ id, job_title, positions }) {
 				}
 			);
 
-			if(message==="Success"){
-				setValues({...values,resume: data})
+			const { url, message, error } = response.data
+
+			if(url){
 				const formData = new FormData();
-				formData.append("resume_link", values.resume);
+				formData.append("resume_link", response.data.url);
 				formData.append("name", values.name);
 				formData.append("email", values.email);
 				formData.append("cover_letter", values.cover_letter);
 				formData.append("job", values.job);
 				formData.append("phone_number", values.phone_number);
+				formData.append("position", values.role);
 
-				const url = `${process.env.ENDPOINT_BASE_URL}/jobs/apply-job`;
+				console.log("This is form data", formData)
+
+				const url = `${process.env.NEXT_PUBLIC_BASE_URL}/jobs/apply-job`;
 
 				try {
 					const response = await axios.post(url, formData, {
@@ -123,7 +127,7 @@ export default function ApplyJob({ id, job_title, positions }) {
 					console.log(error);
 				}
 			}else{
-				console.log(error)
+				console.log(error,message)
 			}
 
 		}

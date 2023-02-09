@@ -1,19 +1,32 @@
 import { v2 as cloudinary } from 'cloudinary'
+import nextConnect from "next-connect";
+import multer from "multer";
+import {  encode } from 'base64-arraybuffer'
 
+const apiRoute = nextConnect({
+	onError(error, req, res) {
+		res.status(501).json({
+			error: `Sorry something Happened! ${error.message}`,
+		});
+	},
+	onNoMatch(req, res) {
+		res.status(405).json({ error: `Method "${req.method}" Not Allowed` });
+	},
+});
 
+apiRoute.use(multer().any());
 
+apiRoute.post((req, res) => {
 
-export default async function handle(
-	req,
-	res
-) {
-	if (req.method !== "POST") {
-		return res.status(405).json({ message: "Error" ,error: "Method Not Allowed" });
-	}
+	const file = req.files[0]
+	const encoded_file= encode(file.buffer)
 
-	const file = req.body.files.file;
+	console.log("Here is file", encoded_file)
+	
 	if (!file) {
-		return res.status(400).json({ message: "Error", error: "File is required" });
+		return res
+			.status(400)
+			.json({ message: "Error", error: "File is required" });
 	}
 
 	// Configuration
@@ -23,28 +36,36 @@ export default async function handle(
 		api_secret: `${process.env.NEXT_PUBLIC_API_SECRET}`,
 	});
 
+	const fileToSend = `data:${file.mimetype};base64,${encoded_file}`
+	
 	try {
-		
-		const response = cloudinary.uploader.upload(file, {
-			public_id: `workforce_assessment/media/company_logos/${file.name}`,
-			resource_type: 'auto',
+		const response = cloudinary.uploader.upload(fileToSend, {
+			public_id: `workforce_assessment/media/company_logos/${file.originalname}`,
+			resource_type: "auto",
 		});
 
-		response.then((data) => {
-			console.log(data);
-			console.log("Secure url",data.secure_url);
-			return res
-				.status(200)
-				.json({
+		response
+			.then((data) => {
+				console.log(data);
+				console.log("Secure url", data.secure_url);
+				return res.status(200).json({
 					message: "Success",
-					data: data.secure_url,
+					url: data.secure_url,
 				});
-		}).catch((err) => {
-			console.log(err);
-		});
+			})
+			.catch((err) => {
+				console.log("Cloudinary error: ",err);
+			});
 	} catch (error) {
-		return res
-			.status(500)
-			.json({ message: "Error", error: error.message });
+		return res.status(500).json({ message: "Error", error: error.message });
 	}
-}
+});
+
+
+export default apiRoute;
+
+export const config = {
+  api: {
+    bodyParser: false, // Disallow body parsing, consume as stream
+  },
+};

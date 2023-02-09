@@ -36,7 +36,7 @@ const modalStyles = {
 
 
 export default function Job({ job }) {
-	const { id,positions, company_logo, company_title, job_title, salary_range, country, job_type, sector, number_of_employees, techstacks = [], ...restProps} = job
+	const { id,positions, company_logo_url, company_title, job_title, salary_range, country, job_type, sector, number_of_employees, techstacks = [], ...restProps} = job
 	const [open, setOpen] = React.useState(false);
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
@@ -58,7 +58,7 @@ export default function Job({ job }) {
 				<Grid item md={1}>
 					<Image
 						alt="logo"
-						src={company_logo}
+						src={company_logo_url}
 						style={{
 							objectFit: "cover",
 							borderRadius: "50%",

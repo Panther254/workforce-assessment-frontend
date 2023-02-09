@@ -19,6 +19,7 @@ export default function PostJobForm() {
   const [formState, setFormState] = React.useState({
     positions: [],
     company_logo: null,
+    company_logo_link: "",
     company_title: '',
     job_title: '',
     salary_range: '',
@@ -26,7 +27,6 @@ export default function PostJobForm() {
     job_type: 'ONSITE',
     sector: '',
     number_of_employees: '',
-    tech_stacks: []
   })
 
   
@@ -48,7 +48,7 @@ export default function PostJobForm() {
     }
   };
 
-  const [data, setData] = React.useState([]);
+  const [stateStacks, setStateStacks] = React.useState([]);
   const [input, setInput] = React.useState('');
   const [error, setError] = React.useState(false);
 
@@ -57,10 +57,9 @@ export default function PostJobForm() {
   };
 
   const handleAdd = event => {
-    event.preventDefault();
-    setData([...data, input]);
-    setInput('')
+    setStateStacks([...stateStacks, input]);
     setError(false)
+	setInput("")
   };
 
   const handleFileChange = event => {
@@ -69,32 +68,31 @@ export default function PostJobForm() {
 
 
   const submitForm = async (e) => {
-    if(data.length < 1){
+    if(stateStacks.length < 1){
       setError(true);
     }else{
-      setFormState((formState) => ({ ...formState, tech_stacks: [...data] }));
-      console.log("Form State: ", formState);
-
+     
 	  const mediaData = new FormData()
 	  mediaData.append("file",formState.company_logo)
 
-	  const { data, message, error } = await axios.post('/api/handleMedia', mediaData, {
+	  const response = await axios.post('/api/handleMedia', mediaData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
 			},
 		});
+		
+		console.log("Heres teh response from NExt JS api",response.data)
+		
+		const { url, message, error } = response.data
 
-		if(message === "success"){
-			setFormState((formState) => ({
-				...formState,
-				company_logo: data,
-			}));
+		
+		if (url) {
 			const formData = new FormData();
 			formData.append("positions", formState.positions);
-			formData.append("company_logo_url", formState.company_logo);
+			formData.append("company_logo_url", response.data.url);
 			formData.append("job_title", formState.job_title);
 			formData.append("company_title", formState.company_title);
-			formData.append("tech_stacks", formState.tech_stacks);
+			formData.append("tech_stacks", stateStacks);
 			formData.append("salary_range", formState.salary_range);
 			formData.append("country", formState.country);
 			formData.append(
@@ -104,40 +102,41 @@ export default function PostJobForm() {
 			formData.append("sector", formState.sector);
 			formData.append("job_type", formState.job_type);
 
+			console.log("Form Data: ", formData);
+
 			const url = `${process.env.NEXT_PUBLIC_BASE_URL}/jobs/post-job`;
 
-			console.log("Here is the generated url", url);
-
 			try {
-				const response = await axios.post(url, formData, {
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
-				});
-				if (response.data) {
-					console.log(response.data);
-					setFormState({
-						...formState,
-						positions: [],
-						company_logo: "",
-						company_title: "",
-						job_title: "",
-						salary_range: "",
-						country: "",
-						job_type: "ONSITE",
-						sector: "",
-						number_of_employees: "",
-						tech_stacks: [],
+				axios
+					.post(url, formData, {
+						headers: {
+							"Content-Type": "multipart/form-data",
+						},
+					})
+					.then((res) => {
+						console.log("Data from post-job endpoint: ",res.data);
+						setFormState({
+							...formState,
+							positions: [],
+							company_logo: "",
+							company_title: "",
+							job_title: "",
+							salary_range: "",
+							country: "",
+							job_type: "ONSITE",
+							sector: "",
+							number_of_employees: "",
+						});
+						setStateStacks([]);
+					})
+					.catch((error) => {
+						console.log(error);
 					});
-					setData([]);
-				} else {
-					console.log(response);
-				}
 			} catch (error) {
 				console.log(error);
 			}
-		}else{
-			console.log(error)
+		} else {
+			console.log(message, error);
 		}
     }
   }
@@ -199,7 +198,7 @@ export default function PostJobForm() {
 							</IconButton>
 							<IconButton
 								aria-label="delete"
-								onClick={() => setData([])}>
+								onClick={() => setStateStacks([])}>
 								<RemoveIcon />
 							</IconButton>
 						</InputAdornment>
@@ -215,7 +214,7 @@ export default function PostJobForm() {
 				helperText={error ? "Field must not be blank" : ""}
 			/>
 			<Box sx={{ display: "flex", width: "100%" }}>
-				{data.map((stack, index) => (
+				{stateStacks.map((stack, index) => (
 					<Typography key={index} mr={2}>
 						{stack}
 					</Typography>
